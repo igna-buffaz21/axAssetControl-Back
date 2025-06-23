@@ -1,0 +1,141 @@
+﻿using axAssetControl.Entidades;
+using axAssetControl.Entidades.Dtos.LocacionDTO;
+using axAssetControl.Entidades.Dtos.SectorDTO;
+using axAssetControl.Mapeo;
+using Microsoft.EntityFrameworkCore;
+
+namespace axAssetControl.AccesoDatos
+{
+    public class SectorAD
+    {
+        private readonly AxAssetControlDbContext _context;
+
+        public SectorAD(AxAssetControlDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<Sector>> ObtenerTodos(int idlocacion, int idEmpresa)
+        {
+            try
+            {
+                return await _context.Sectors.AsNoTracking().Where(s => s.IdLocation == idlocacion && s.IdEmpresa == idEmpresa).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los sectores " + ex.Message);
+            }
+        }
+
+        public async Task<Sector> ObtenerPorId(int id)
+        {
+            try
+            {
+                return await _context.Sectors.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el sector " + ex.Message);
+            }
+        }
+
+        public async Task Agregar(Sector sector)
+        {
+            try
+            {
+                await _context.Sectors.AddAsync(sector);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al crear el sector " + ex.Message + "/" + ex.InnerException);
+            }
+        }
+
+        public async Task Eliminar(int id)
+        {
+            try
+            {
+                var sector = await _context.Sectors.FindAsync(id);
+                if (sector != null)
+                {
+                    _context.Sectors.Remove(sector);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar el sector " + ex.Message);
+            }
+        }
+
+        public async Task Actualizar(Sector sect)
+        {
+            try
+            {
+                var sector = await _context.Sectors.FindAsync(sect.Id);
+
+                if (sector == null)
+                {
+                    throw new Exception("Sector no encontrado");
+                }
+
+                sector.Name = sect.Name;
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al actualizar el Sector en la base de datos " + ex.Message);
+            }
+        }
+
+        public async Task<List<ObtenerSectorPorControlDTO>> ObtenerSectorPorNombre(int idLocacion, string nombre)
+        {
+            try
+            {
+                var sector = await _context.Sectors
+                    .Where(s => s.IdLocation == idLocacion && s.Name.Contains(nombre)).ToListAsync();
+
+                var sectorDTO = MapeoSector.ObtenerSectorDTO(sector);
+
+                return sectorDTO;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los sectores " + ex.Message);
+            }
+        }
+
+        public async Task<List<ObtenerSectorPorControlDTO>> FiltrarSectores(int idLocacion, string orden)
+        {
+            try
+            {
+
+                var query = _context.Sectors
+                    .Where(s => s.IdLocation == idLocacion)
+                    .AsQueryable();
+
+                if (orden.ToLower() == "asc")
+                {
+                    query = query.OrderBy(s => s.Name);
+                }
+                else if (orden.ToLower() == "desc")
+                {
+                    query = query.OrderByDescending(s => s.Name);
+                }
+
+
+                var sectores = await query.ToListAsync();
+
+                var sectoresDTO = MapeoSector.ObtenerSectorDTO(sectores);
+
+                return sectoresDTO;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los sectores " + ex.Message);
+            }
+        }
+    }
+}

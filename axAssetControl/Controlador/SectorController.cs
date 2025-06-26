@@ -1,4 +1,5 @@
-﻿using axAssetControl.Entidades.Dtos.SectorDTO;
+﻿using axAssetControl.Entidades.Dtos.LocacionDTO;
+using axAssetControl.Entidades.Dtos.SectorDTO;
 using axAssetControl.Negocio;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -55,7 +56,7 @@ namespace axAssetControl.Controlador
             }
         }
 
-        [HttpDelete("EliminarSector/{id}")]
+        /*[HttpDelete("EliminarSector/{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -71,6 +72,25 @@ namespace axAssetControl.Controlador
             catch (Exception ex)
             {
                 return StatusCode(500, new {mensaje = "Error interno al borrar el sector, intentelo mas tarde!" }); //error inesperado
+            }
+        }*/
+
+        [HttpPut("CambiarEstado")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateStatus([FromBody] int id)
+        {
+            try
+            {
+                await _sectorNegocio.CambiarEstado(id);
+                return Ok(new { mensaje = "sector editado con exito" });///cod 200
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al actualizar el sector, intentelo mas tarde!" }); //cod 500
             }
         }
 

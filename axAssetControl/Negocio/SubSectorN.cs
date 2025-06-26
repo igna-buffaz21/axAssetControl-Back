@@ -45,14 +45,15 @@ namespace axAssetControl.Negocio
             await _subSectorAD.Agregar(subSector);
         }
 
-        public async Task EliminarSubSector(int id)
+        /*public async Task EliminarSubSector(int id)
         {
             if (id == 0)
             {
                 throw new ArgumentException("El id del subsector es obligatorio.");
             }
             await _subSectorAD.Eliminar(id);
-        }
+        }*/
+
         public async Task ActualizarSubSector(ActualizarSubSectorDTO subSectorDTO)
         {
 
@@ -69,6 +70,13 @@ namespace axAssetControl.Negocio
             }
 
             await _subSectorAD.Actualizar(subSector);
+
+        }
+
+        public async Task CambiarEstado(int id)
+        {
+
+            await _subSectorAD.CambiarEstado(id);
 
         }
 

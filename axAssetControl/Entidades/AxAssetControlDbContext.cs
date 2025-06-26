@@ -70,6 +70,14 @@ public partial class AxAssetControlDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("tag_rfid");
 
+            entity.Property(e => e.Version)
+            .HasColumnName("version")
+            .HasDefaultValue(1);
+
+            entity.Property(e => e.Status)
+            .HasColumnName("status")
+            .HasDefaultValue(true);
+
             entity.HasOne(d => d.IdActiveTypeNavigation).WithMany(p => p.Actives)
                 .HasForeignKey(d => d.IdActiveType)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -172,7 +180,17 @@ public partial class AxAssetControlDbContext : DbContext
             entity.ToTable("location");
 
             entity.Property(e => e.Id).HasColumnName("id");
+
             entity.Property(e => e.IdCompany).HasColumnName("id_company");
+
+            entity.Property(e => e.Version)
+            .HasColumnName("version")
+            .HasDefaultValue(1);
+
+            entity.Property(e => e.Status)
+            .HasColumnName("status")
+            .HasDefaultValue(true);
+
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -199,6 +217,14 @@ public partial class AxAssetControlDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("tag_rfid");
+
+            entity.Property(e => e.Version)
+            .HasColumnName("version")
+            .HasDefaultValue(1);
+
+            entity.Property(e => e.Status)
+            .HasColumnName("status")
+            .HasDefaultValue(true);
 
             entity.HasOne(d => d.IdLocationNavigation).WithMany(p => p.Sectors)
                 .HasForeignKey(d => d.IdLocation)
@@ -228,7 +254,15 @@ public partial class AxAssetControlDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("tag_rfid");
 
-            entity.HasOne(d => d.IdSectorNavigation).WithMany(p => p.Subsectors)
+                entity.Property(e => e.Version)
+                .HasColumnName("version")
+                .HasDefaultValue(1);
+
+                entity.Property(e => e.Status)
+                .HasColumnName("status")
+                .HasDefaultValue(true);
+
+                entity.HasOne(d => d.IdSectorNavigation).WithMany(p => p.Subsectors)
                 .HasForeignKey(d => d.IdSector)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_subsector_sector");
@@ -305,6 +339,80 @@ public partial class AxAssetControlDbContext : DbContext
         });
 
         OnModelCreatingPartial(modelBuilder);
+    }
+
+    public override int SaveChanges()
+    {
+        foreach (var entry in ChangeTracker.Entries<Location>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.Version++;
+            }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<Sector>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.Version++;
+            }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<Subsector>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.Version++;
+            }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<Active>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.Version++;
+            }
+        }
+
+        return base.SaveChanges();
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in ChangeTracker.Entries<Location>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.Version++;
+            }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<Sector>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.Version++;
+            }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<Subsector>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.Version++;
+            }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<Active>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.Version++;
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

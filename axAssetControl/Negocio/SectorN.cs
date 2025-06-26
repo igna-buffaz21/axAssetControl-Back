@@ -44,14 +44,14 @@ namespace axAssetControl.Negocio
             await _sectorAD.Agregar(sector);
         }
 
-        public async Task EliminarSector(int id)
+        /*public async Task EliminarSector(int id)
         {
             if (id == 0)
             {
                 throw new ArgumentException("El id del sector es obligatorio.");
             }
             await _sectorAD.Eliminar(id);
-        }
+        }*/
 
         public async Task ActualizarSector(ActualizarSectorDTO sectorDTO)
         {
@@ -64,6 +64,13 @@ namespace axAssetControl.Negocio
             }///Validacion nombre empresa
 
             await _sectorAD.Actualizar(sector);
+
+        }
+
+        public async Task CambiarEstado(int id)
+        {
+
+            await _sectorAD.CambiarEstado(id);
 
         }
 

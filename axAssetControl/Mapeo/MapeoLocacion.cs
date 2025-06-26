@@ -32,5 +32,13 @@ namespace axAssetControl.Mapeo
                 Name = l.Name
             }).ToList();
         }
+
+        public static Location CambiarEstado(CambiarEstadoDTO locacionDTO)
+        {
+            return new Location
+            {
+                Id = locacionDTO.Id
+            };
+        }
     }
 }

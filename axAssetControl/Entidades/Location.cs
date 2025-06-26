@@ -14,4 +14,8 @@ public partial class Location
     public virtual Company IdCompanyNavigation { get; set; } = null!;
 
     public virtual ICollection<Sector> Sectors { get; set; } = new List<Sector>();
+
+    public int Version { get; set; }
+
+    public bool Status { get; set; } ///true = activo, false = dado de baja
 }

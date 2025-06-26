@@ -56,7 +56,7 @@ namespace axAssetControl.Controlador
             }
         }
 
-        [HttpDelete("EliminarSubSector/{id}")]
+        /*[HttpDelete("EliminarSubSector/{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -73,7 +73,7 @@ namespace axAssetControl.Controlador
             {
                 return StatusCode(500, new {mensaje = "Error interno al borrar el subsector, intentelo mas tarde!"}); //error inesperado
             }
-        }
+        }*/
 
         [HttpPut("ActualizarSubSector")]
         [Authorize(Roles = "admin")]
@@ -91,6 +91,25 @@ namespace axAssetControl.Controlador
             catch (Exception ex)
             {
                 return StatusCode(500, new {mensaje = "Error interno al actualizar el subsector, intentelo mas tarde!" }); //cod 500
+            }
+        }
+
+        [HttpPut("CambiarEstado")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateStatus([FromBody] int id)
+        {
+            try
+            {
+                await _subSectorNegocio.CambiarEstado(id);
+                return Ok(new { mensaje = "subSector editado con exito" });///cod 200
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al actualizar el subSector, intentelo mas tarde!" }); //cod 500
             }
         }
 

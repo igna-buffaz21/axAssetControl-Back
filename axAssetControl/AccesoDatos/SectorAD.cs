@@ -19,7 +19,7 @@ namespace axAssetControl.AccesoDatos
         {
             try
             {
-                return await _context.Sectors.AsNoTracking().Where(s => s.IdLocation == idlocacion && s.IdEmpresa == idEmpresa).ToListAsync();
+                return await _context.Sectors.AsNoTracking().Where(s => s.IdLocation == idlocacion && s.IdEmpresa == idEmpresa && s.Status == true).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -52,7 +52,7 @@ namespace axAssetControl.AccesoDatos
             }
         }
 
-        public async Task Eliminar(int id)
+        /*public async Task Eliminar(int id)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace axAssetControl.AccesoDatos
             {
                 throw new Exception("Error al eliminar el sector " + ex.Message);
             }
-        }
+        }*/
 
         public async Task Actualizar(Sector sect)
         {
@@ -87,6 +87,49 @@ namespace axAssetControl.AccesoDatos
             catch (Exception ex)
             {
                 throw new Exception("Error al actualizar el Sector en la base de datos " + ex.Message);
+            }
+        }
+
+        public async Task CambiarEstado(int id)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var sector = await _context.Sectors.FindAsync(id);
+
+                if (sector == null)
+                {
+                    throw new Exception("sector no encontrado");
+                }
+
+                sector.Status = !sector.Status;
+
+                    var subsectores = await _context.Subsectors
+                        .Where(ss => ss.IdSector == sector.Id && ss.Status == true)
+                        .ToListAsync();
+
+                    foreach (var subsector in subsectores)
+                    {
+                        subsector.Status = !subsector.Status;
+
+                        var activos = await _context.Actives
+                            .Where(a => a.IdSubsector == subsector.Id && a.Status == true)
+                            .ToListAsync();
+
+                        foreach (var activo in activos)
+                        {
+                            activo.Status = false;
+                        }
+                    }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception("Error al actualizar los estados de los sectores en la base de datos " + ex.Message);
             }
         }
 

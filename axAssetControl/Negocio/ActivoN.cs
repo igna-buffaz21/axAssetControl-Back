@@ -63,14 +63,14 @@ namespace axAssetControl.Negocio
 
         }
 
-        public async Task EliminarActivo(int id)
+        /*public async Task EliminarActivo(int id)
         {
             if (id == 0)
             {
                 throw new ArgumentException("El id del activo es obligatorio.");
             }
             await _activoAD.Eliminar(id);
-        }
+        }*/
 
         public async Task ActualizarActivo (ActualizarActivoDTO activoDTO)
         {
@@ -104,6 +104,13 @@ namespace axAssetControl.Negocio
 
             await _activoAD.Actualizar(activo);
 
+        }
+
+        public async Task CambiarEstado(int id)
+        {
+
+            await _activoAD.CambiarEstado(id);
+            
         }
 
         public async Task<List<ObtenerActivoDTO>> ObtenerActivoPorNombre(int idSubSector, string nombre)

@@ -19,7 +19,7 @@ namespace axAssetControl.AccesoDatos
         {
             try
             {
-                return await _context.Actives.AsNoTracking().Where(a => a.IdSubsector == idsubsector && a.IdEmpresa == idEmpresa).ToListAsync();
+                return await _context.Actives.AsNoTracking().Where(a => a.IdSubsector == idsubsector && a.IdEmpresa == idEmpresa && a.Status == true).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -52,7 +52,7 @@ namespace axAssetControl.AccesoDatos
             }
         }
 
-        public async Task Eliminar(int id)
+        /*public async Task Eliminar(int id)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace axAssetControl.AccesoDatos
             {
                 throw new Exception("Error al eliminar el activo " + ex.Message);
             }
-        }
+        }*/
 
         public async Task Actualizar(Active dto)
         {
@@ -93,6 +93,27 @@ namespace axAssetControl.AccesoDatos
             catch (Exception ex)
             {
                 throw new Exception("Error al actualizar el activo en la base de datos " + ex);
+            }
+        }
+
+        public async Task CambiarEstado(int id)
+        {
+            try
+            {
+                var activos = await _context.Actives.FindAsync(id);
+
+                if (activos == null)
+                {
+                    throw new Exception("activos no encontrada");
+                }
+
+                activos.Status = !activos.Status;
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al actualizar el activos en la base de datos " + ex.Message);
             }
         }
 

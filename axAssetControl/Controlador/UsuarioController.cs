@@ -63,6 +63,25 @@ namespace axAssetControl.Controlador
             }
         }
 
+        [HttpPost("CrearUsuarioEnCantidad")]
+        [Authorize(Roles = "admin, superadmin")]
+        public async Task<IActionResult> PostUsers([FromBody] List<CrearUsuarioDTO> usersDTO)
+        {
+            try
+            {
+                await _usuarioNegocio.CrearUsuariosEnCantidad(usersDTO);
+                return Ok(new { mensaje = "Usuarios creados con exito" });///cod 200
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al crear los usuarios, intentelo mas tarde!" }); //cod 500
+            }
+        }
+
         /*[HttpDelete("EliminarUsuario/{id}")]
         [Authorize]
         public async Task<IActionResult> Delete(int id)

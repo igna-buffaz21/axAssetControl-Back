@@ -54,7 +54,7 @@ namespace axAssetControl.Controlador
             }
         }
 
-        [HttpDelete("EliminarActivo/{id}")]
+        /*[HttpDelete("EliminarActivo/{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -71,7 +71,7 @@ namespace axAssetControl.Controlador
             {
                 return StatusCode(500, new {mensaje = "Error interno al borrar el activo, intentelo mas tarde!" }); //error inesperado
             }
-        }
+        }*/
 
         [HttpPut("ActualizarActivo")]
         [Authorize(Roles = "admin")]
@@ -90,6 +90,25 @@ namespace axAssetControl.Controlador
             {
                 //return StatusCode(500, new {mensaje = "Error interno al actualizar el activo, intentelo mas tarde!" }); //cod 500
                 return StatusCode(500, ex.Message + " / " + ex.InnerException); //cod 500
+            }
+        }
+
+        [HttpPut("CambiarEstado")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateStatus([FromBody] int id)
+        {
+            try
+            {
+                await _activoNegocio.CambiarEstado(id);
+                return Ok(new { mensaje = "activo editado con exito" });///cod 200
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al actualizar el activo, intentelo mas tarde!" }); //cod 500
             }
         }
 

@@ -40,14 +40,16 @@ namespace axAssetControl.Negocio
 
             await _locacionAD.Agregar(locacion);
         }
-        public async Task EliminarLocacion(int id)
+        /*public async Task EliminarLocacion(int id)
         {
             if (id == 0)
             {
                 throw new ArgumentException("El id del usuario es obligatorio.");
             }
             await _locacionAD.Eliminar(id);
-        }
+        }*/
+
+
         public async Task ActualizarLocacion(ActualizarLocacionDTO locacionDTO)
         {
 
@@ -59,6 +61,15 @@ namespace axAssetControl.Negocio
             }///Validacion nombre usuario
 
             await _locacionAD.Actualizar(locacion);
+
+        }
+
+        public async Task CambiarEstado(CambiarEstadoDTO locacionDTO)
+        {
+
+            var locacion = MapeoLocacion.CambiarEstado(locacionDTO);
+
+            await _locacionAD.CambiarEstado(locacion);
 
         }
 

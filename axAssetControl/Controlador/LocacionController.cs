@@ -54,7 +54,7 @@ namespace axAssetControl.Controlador
             }
         }
 
-        [HttpDelete("EliminarLocacion/{id}")]
+        /*[HttpDelete("EliminarLocacion/{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -71,7 +71,7 @@ namespace axAssetControl.Controlador
             {
                 return StatusCode(500, new {mensaje = "Error interno al borrar la locacion, intentelo mas tarde!" }); //error inesperado
             }
-        }
+        }*/
 
         [HttpPut("ActualizarLocacion")]
         [Authorize(Roles = "admin")]
@@ -89,6 +89,25 @@ namespace axAssetControl.Controlador
             catch (Exception ex)
             {
                 return StatusCode(500, new {mensaje = "Error interno al actualizar la locacion, intentelo mas tarde!" }); //cod 500
+            }
+        }
+
+        [HttpPut("CambiarEstado")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateStatus([FromBody] CambiarEstadoDTO locacionDTO)
+        {
+            try
+            {
+                await _locacionNegocio.CambiarEstado(locacionDTO);
+                return Ok(new { mensaje = "Locacion editada con exito" });///cod 200
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al actualizar la locacion, intentelo mas tarde!" }); //cod 500
             }
         }
 

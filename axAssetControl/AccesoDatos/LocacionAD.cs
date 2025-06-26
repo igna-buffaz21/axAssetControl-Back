@@ -51,7 +51,7 @@ namespace axAssetControl.AccesoDatos
             }
         }
 
-        public async Task Eliminar(int id)
+        /*public async Task Eliminar(int id)
         {
             try
             {
@@ -66,7 +66,9 @@ namespace axAssetControl.AccesoDatos
             {
                 throw new Exception("Error al eliminar la locacion" + ex.Message + " / " + ex.InnerException);
             }
-        }
+        }*/ 
+
+
 
         public async Task Actualizar(Location loca)
         {
@@ -76,7 +78,7 @@ namespace axAssetControl.AccesoDatos
 
                 if (locacion == null)
                 {
-                    throw new Exception("Usuario no encontrado");
+                    throw new Exception("Locacion no encontrado");
                 }
 
                 locacion.Name = loca.Name;
@@ -85,7 +87,59 @@ namespace axAssetControl.AccesoDatos
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al actualizar el usuario en la base de datos " + ex.Message);
+                throw new Exception("Error al actualizar la Locacion en la base de datos " + ex.Message);
+            }
+        }
+
+        public async Task CambiarEstado(Location loca)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var locacion = await _context.Locations.FindAsync(loca.Id);
+
+                if (locacion == null)
+                {
+                    throw new Exception("Locacion no encontrada");
+                }
+
+                locacion.Status = !locacion.Status;
+
+                var sectores = await _context.Sectors
+                    .Where(s => s.IdLocation == loca.Id)
+                    .ToListAsync();
+
+                foreach (var sector in sectores)
+                {
+                    sector.Status = !sector.Status;
+
+                    var subsectores = await _context.Subsectors
+                        .Where(ss => ss.IdSector == sector.Id)
+                        .ToListAsync();
+
+                    foreach(var subsector in subsectores)
+                    {
+                        subsector.Status = !subsector.Status;
+
+                        var activos = await _context.Actives
+                            .Where(a => a.IdSubsector == subsector.Id)
+                            .ToListAsync();
+
+                        foreach (var activo in activos)
+                        {
+                            activo.Status = !activo.Status;
+                        }
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception("Error al actualizar la locacion en la base de datos " + ex.Message);
             }
         }
 

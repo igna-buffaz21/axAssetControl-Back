@@ -19,7 +19,7 @@ namespace axAssetControl.AccesoDatos
         {
             try
             {
-                return await _context.Subsectors.AsNoTracking().Where(s => s.IdSector == idsector && s.IdEmpresa == idEmpresa).ToListAsync();
+                return await _context.Subsectors.AsNoTracking().Where(s => s.IdSector == idsector && s.IdEmpresa == idEmpresa && s.Status == true).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -52,7 +52,7 @@ namespace axAssetControl.AccesoDatos
             }
         }
 
-        public async Task Eliminar(int id)
+        /*public async Task Eliminar(int id)
         {
             try
             {
@@ -66,6 +66,40 @@ namespace axAssetControl.AccesoDatos
             catch (Exception ex)
             {
                 throw new Exception("Error al eliminar el subsector " + ex.Message);
+            }
+        }*/
+
+        public async Task CambiarEstado(int id)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var subSector = await _context.Subsectors.FindAsync(id);
+
+                if (subSector == null)
+                {
+                    throw new Exception("subSector no encontrado");
+                }
+
+                subSector.Status = !subSector.Status;
+
+                    var activos = await _context.Actives
+                        .Where(a => a.IdSubsector == subSector.Id && a.Status == true)
+                        .ToListAsync();
+
+                    foreach (var activo in activos)
+                    {
+                        activo.Status = false;
+                    }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception("Error al actualizar los estados de los subSector en la base de datos " + ex.Message);
             }
         }
 

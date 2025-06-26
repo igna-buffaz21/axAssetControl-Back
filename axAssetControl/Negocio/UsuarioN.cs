@@ -135,6 +135,34 @@ namespace axAssetControl.Negocio
 
             await _sendMail.SendEmail(usuario.Email, "Bienvenido a axAssetControl", body);
         }
+
+        public async Task CrearUsuariosEnCantidad(List<CrearUsuarioDTO> usersDTO)
+        {
+
+            Console.WriteLine($"USUARIOS LLEGADOS DE KOTLIN - Cantidad: {usersDTO.Count}");
+
+            foreach (var usuario in usersDTO)
+            {
+                Console.WriteLine($"Usuario: {usuario.Name}, Email: {usuario.Email}, Company: {usuario.IdCompany}");
+            }
+
+            if (usersDTO.Count < 1)
+            {
+                throw new ArgumentException("Lista de usuarios vacia!");
+            }
+
+            var users = usersDTO.Select(u => new User
+            {
+                IdCompany = u.IdCompany,
+                Name = u.Name,
+                Email = u.Email,
+                Password = _hasher.HashPassword(null, u.Password), // Hashear aquí
+                Rol = u.Rol,
+                Status = u.Status.Trim(), // Trim aquí
+            }).ToList();
+
+            await _usuarioAD.AgregarUsuariosEnCantidad(users);
+        }
         
         public async Task EliminarUsuario(int id)
         {

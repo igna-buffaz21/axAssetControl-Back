@@ -22,4 +22,8 @@ public partial class Subsector
     public int IdEmpresa { get; set; }
 
     public virtual Company Company { get; set; } = null!;
+
+    public int Version { get; set; }
+
+    public bool Status { get; set; } ///true = activo, false = dado de baja
 }

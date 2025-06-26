@@ -37,7 +37,7 @@ namespace axAssetControl.AccesoDatos
             {
                 throw new Exception("Error al obtener el usuario", ex);
             }
-        } 
+        }
 
         public async Task Agregar(User usuario)
         {
@@ -51,6 +51,19 @@ namespace axAssetControl.AccesoDatos
                 throw new Exception("Error al crear el usuario", ex);
             }
         }
+
+        public async Task AgregarUsuariosEnCantidad(List<User> users) ///PRUEBA KOTLIN ///DESPUES BORRAR
+        {
+            try
+            {
+                await _context.Users.AddRangeAsync(users);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al crear los usuario en cantidad", ex);
+            }
+        } 
 
         public async Task Eliminar(int id)
         {

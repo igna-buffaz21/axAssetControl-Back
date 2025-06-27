@@ -14,11 +14,11 @@ namespace axAssetControl.AccesoDatos
             _context = context;
         }
 
-        public async Task<List<Location>> ObtenerTodos(int idcompany)
+        public async Task<List<Location>> ObtenerTodos(int idcompany, bool status)
         {
             try
             {
-                return await _context.Locations.AsNoTracking().Where(l => l.IdCompany == idcompany).ToListAsync();
+                return await _context.Locations.AsNoTracking().Where(l => l.IdCompany == idcompany && l.Status == status).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -103,38 +103,77 @@ namespace axAssetControl.AccesoDatos
                     throw new Exception("Locacion no encontrada");
                 }
 
-                locacion.Status = !locacion.Status;
+                bool estadoActivacion = locacion.Status; ///determinar si vamos a activar o desactivar ///si el estado actual es true, vamos a desactivar, por ende entra al if, y si es false entra al else y lo activa
+                ///
 
-                var sectores = await _context.Sectors
-                    .Where(s => s.IdLocation == loca.Id)
-                    .ToListAsync();
-
-                foreach (var sector in sectores)
+                if (estadoActivacion) ///caso de desactivacion
                 {
-                    sector.Status = !sector.Status;
+                    locacion.Status = false;
 
-                    var subsectores = await _context.Subsectors
-                        .Where(ss => ss.IdSector == sector.Id)
+                    var sectores = await _context.Sectors
+                        .Where(s => s.IdLocation == loca.Id && s.Status == true)
                         .ToListAsync();
 
-                    foreach(var subsector in subsectores)
+                    foreach (var sector in sectores)
                     {
-                        subsector.Status = !subsector.Status;
+                        sector.Status = false;
 
-                        var activos = await _context.Actives
-                            .Where(a => a.IdSubsector == subsector.Id)
+                        var subsectores = await _context.Subsectors
+                            .Where(ss => ss.IdSector == sector.Id && ss.Status == true)
                             .ToListAsync();
 
-                        foreach (var activo in activos)
+                        foreach (var subsector in subsectores)
                         {
-                            activo.Status = !activo.Status;
+                            subsector.Status = false;
+
+                            var activos = await _context.Actives
+                                .Where(a => a.IdSubsector == subsector.Id && a.Status == true)
+                                .ToListAsync();
+
+                            foreach (var activo in activos)
+                            {
+                                activo.Status = false;
+                            }
                         }
                     }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
                 }
+                else ///caso de activacion
+                {
+                    locacion.Status = true; 
 
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                    var sectores = await _context.Sectors
+                        .Where(s => s.IdLocation == loca.Id && s.Status == false)
+                        .ToListAsync();
 
+                    foreach (var sector in sectores)
+                    {
+                        sector.Status = true;
+
+                        var subsectores = await _context.Subsectors
+                            .Where(ss => ss.IdSector == sector.Id && ss.Status == false)
+                            .ToListAsync();
+
+                        foreach (var subsector in subsectores)
+                        {
+                            subsector.Status = true;
+
+                            var activos = await _context.Actives
+                                .Where(a => a.IdSubsector == subsector.Id && a.Status == false)
+                                .ToListAsync();
+
+                            foreach (var activo in activos)
+                            {
+                                activo.Status = true;
+                            }
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
             }
             catch (Exception ex)
             {

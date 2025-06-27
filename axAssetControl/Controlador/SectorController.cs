@@ -20,9 +20,11 @@ namespace axAssetControl.Controlador
 
         [HttpGet("Locacion/{idcompany}")]
         [Authorize(Roles = "admin, operator")]
-        public async Task<IActionResult> Get(int idcompany, [FromQuery] int idEmpresa)
+        public async Task<IActionResult> Get(int idcompany, [FromQuery] int idEmpresa, bool status)
         {
-            var sector = await _sectorNegocio.ObtenerSectores(idcompany, idEmpresa);
+            Console.WriteLine(status);
+
+            var sector = await _sectorNegocio.ObtenerSectores(idcompany, idEmpresa, status);
             if (sector == null) return NotFound(); ///cod 404
             return Ok(sector); //cod 200
         }

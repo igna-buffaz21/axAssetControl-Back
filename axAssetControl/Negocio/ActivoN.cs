@@ -17,9 +17,9 @@ namespace axAssetControl.Negocio
             _activoAD = activoAD;
         }
 
-        public async Task<List<Active>> ObtenerActivos(int idsubsector, int idEmpresa)
+        public async Task<List<Active>> ObtenerActivos(int idsubsector, int idEmpresa, bool status)
         {
-            return await _activoAD.ObtenerTodos(idsubsector, idEmpresa);
+            return await _activoAD.ObtenerTodos(idsubsector, idEmpresa, status);
         }
 
         public async Task<Active> ObtenerActivoPorId(int id)

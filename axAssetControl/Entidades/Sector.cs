@@ -23,5 +23,5 @@ public partial class Sector
 
     public int Version { get; set; }
 
-    public bool Status { get; set; } ///true = activo, false = dado de baja
+    public bool Status { get; set; } = true; ///true = activo, false = dado de baja
 }

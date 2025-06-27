@@ -20,9 +20,9 @@ namespace axAssetControl.Controlador
 
         [HttpGet("SubSector/{idsubsector}")]
         [Authorize(Roles = "admin, operator")]
-        public async Task<IActionResult> Get(int idsubsector, [FromQuery] int idEmpresa)
+        public async Task<IActionResult> Get(int idsubsector, [FromQuery] int idEmpresa, bool status)
         {
-            var activos = await _activoNegocio.ObtenerActivos(idsubsector, idEmpresa);
+            var activos = await _activoNegocio.ObtenerActivos(idsubsector, idEmpresa, status);
             if (activos == null) return NotFound(); ///cod 404 ///nunca null ///ver
             return Ok(activos); //cod 200
         }

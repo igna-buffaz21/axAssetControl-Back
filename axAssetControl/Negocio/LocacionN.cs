@@ -14,9 +14,9 @@ namespace axAssetControl.Negocio
             _locacionAD = locacionAD;
         }
 
-        public async Task<List<Location>> ObtenerLocaciones(int idcompany)
+        public async Task<List<Location>> ObtenerLocaciones(int idcompany, bool status)
         {
-            return await _locacionAD.ObtenerTodos(idcompany);
+            return await _locacionAD.ObtenerTodos(idcompany, status);
         }
         public async Task<Location> ObtenerLocacionPorId(int id)
         {

@@ -15,9 +15,9 @@ namespace axAssetControl.Negocio
             _sectorAD = sectorAD;
         }
 
-        public async Task<List<Sector>> ObtenerSectores(int idsector, int idEmpresa)
+        public async Task<List<Sector>> ObtenerSectores(int idsector, int idEmpresa, bool status)
         {
-            return await _sectorAD.ObtenerTodos(idsector, idEmpresa);
+            return await _sectorAD.ObtenerTodos(idsector, idEmpresa, status);
         }
 
         public async Task<Sector> ObtenerSectorPorId(int id)

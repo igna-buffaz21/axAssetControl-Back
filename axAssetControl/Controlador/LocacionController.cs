@@ -19,9 +19,9 @@ namespace axAssetControl.Controlador
 
         [HttpGet("Empresa/{idcompany}")]
         [Authorize(Roles = "admin, operator")]
-        public async Task<IActionResult> Get(int idcompany)
+        public async Task<IActionResult> Get(int idcompany, [FromQuery] bool status)
         {
-            var locaciones = await _locacionNegocio.ObtenerLocaciones(idcompany);
+            var locaciones = await _locacionNegocio.ObtenerLocaciones(idcompany, status);
             if (locaciones == null) return NotFound(); ///cod 404
             return Ok(locaciones); //cod 200
         }

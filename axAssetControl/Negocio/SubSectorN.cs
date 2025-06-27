@@ -16,9 +16,9 @@ namespace axAssetControl.Negocio
             _subSectorAD = subSectorAD;
         }
 
-        public async Task<List<Subsector>> ObtenerSubSectores(int idsector, int idEmpresa)
+        public async Task<List<Subsector>> ObtenerSubSectores(int idsector, int idEmpresa, bool status)
         {
-            return await _subSectorAD.ObtenerTodos(idsector, idEmpresa);
+            return await _subSectorAD.ObtenerTodos(idsector, idEmpresa, status);
         }
 
         public async Task<Subsector> ObtenerSubSectorPorId(int id)

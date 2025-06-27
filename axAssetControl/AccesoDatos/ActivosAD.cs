@@ -15,11 +15,11 @@ namespace axAssetControl.AccesoDatos
             _context = context;
         }
 
-        public async Task<List<Active>> ObtenerTodos(int idsubsector, int idEmpresa)
+        public async Task<List<Active>> ObtenerTodos(int idsubsector, int idEmpresa, bool status)
         {
             try
             {
-                return await _context.Actives.AsNoTracking().Where(a => a.IdSubsector == idsubsector && a.IdEmpresa == idEmpresa && a.Status == true).ToListAsync();
+                return await _context.Actives.AsNoTracking().Where(a => a.IdSubsector == idsubsector && a.IdEmpresa == idEmpresa && a.Status == status).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -98,22 +98,38 @@ namespace axAssetControl.AccesoDatos
 
         public async Task CambiarEstado(int id)
         {
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var activos = await _context.Actives.FindAsync(id);
+                var activo = await _context.Actives.FindAsync(id);
 
-                if (activos == null)
+                if (activo == null)
                 {
-                    throw new Exception("activos no encontrada");
+                    throw new Exception("Locacion no encontrada");
                 }
 
-                activos.Status = !activos.Status;
+                bool estadoActivacion = activo.Status; ///determinar si vamos a activar o desactivar ///si el estado actual es true, vamos a desactivar, por ende entra al if, y si es false entra al else y lo activa
 
-                await _context.SaveChangesAsync();
+
+                if (estadoActivacion) ///caso de desactivacion
+                {
+                    activo.Status = false;
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                else ///caso de activacion
+                {
+                    activo.Status = true;
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al actualizar el activos en la base de datos " + ex.Message);
+                await transaction.RollbackAsync();
+                throw new Exception("Error al actualizar la locacion en la base de datos " + ex.Message);
             }
         }
 

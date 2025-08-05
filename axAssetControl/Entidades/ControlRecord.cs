@@ -9,7 +9,7 @@ public partial class ControlRecord
 
     public int IdSubsector { get; set; }
 
-    public DateTime Date { get; set; }
+    public long Date { get; set; }
 
     public virtual ICollection<DetailControl> DetailControls { get; set; } = new List<DetailControl>();
 

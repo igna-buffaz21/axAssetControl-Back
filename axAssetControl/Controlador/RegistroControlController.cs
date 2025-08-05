@@ -43,16 +43,19 @@ namespace axAssetControl.Controlador
         {
             try
             {
-                await _registroControlNegocio.CrearRegistroControl(registroControlDTO);
-                return Ok("registro Control creado exitosamente");///cod 200
+                Console.WriteLine("REGISTRO CONTROL " + registroControlDTO.IdSubsector + "IDCOMPANY: " + registroControlDTO.IdCompany);
+                var id = await _registroControlNegocio.CrearRegistroControl(registroControlDTO);
+                return Ok(new {idRegistroControl = id});///cod 200
             }
             catch (ArgumentException ex)
             {
+                Console.WriteLine("ERROR 400" + ex.InnerException);
                 return BadRequest(ex.Message); //cod 400
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Error interno al crear el registro Control " + ex.Message); //cod 500
+                Console.WriteLine("ERROR 500" + ex.InnerException);
+                return StatusCode(500, "Error interno al crear el registro Control " + ex.InnerException); //cod 500
             }
         }
 

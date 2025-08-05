@@ -25,7 +25,7 @@ namespace axAssetControl.Negocio
             return await _registroControlAD.ObtenerPorId(id);
         }
 
-        public async Task CrearRegistroControl(CrearRegistroControlDTO registroControlDTO)
+        public async Task<int> CrearRegistroControl(CrearRegistroControlDTO registroControlDTO)
         {
 
             var registroControl = MapeoRegistroControl.CrearRegistroControl(registroControlDTO);
@@ -35,7 +35,7 @@ namespace axAssetControl.Negocio
                 throw new ArgumentException("El id del subsector es obligatorio.");
             }//validacion id_subsector
 
-            await _registroControlAD.Agregar(registroControl);
+            return await _registroControlAD.Agregar(registroControl);
         }
 
         public async Task EliminarRegistroControl(int id)

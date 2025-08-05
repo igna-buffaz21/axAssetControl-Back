@@ -34,15 +34,21 @@ namespace axAssetControl.Controlador
             return Ok(usuarios); //cod 200
         }
 
-        /*[HttpGet("ObtenerUsuarioPorId/{id}")]
-        [Authorize]
+        [HttpGet("obtenerDatosUsuario/{id}")]
+        [Authorize(Roles = "admin, operator, superadmin")]
         public async Task<IActionResult> GetForId(int id)
         {
-            var usuario = await _usuarioNegocio.ObtenerUsuarioPorId(id);
-            if (usuario == null) return NotFound(); //cod 404
-            return Ok(usuario); //cod 200
-            
-        } */
+            try
+            {
+                var usuario = await _usuarioNegocio.obtenerDatosUsuario(id);
+
+                return Ok(usuario); //cod 200
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al obtener el usuario, intentelo mas tarde!" }); //cod 500
+            }
+        }
 
         [HttpPost("CrearUsuario")]
         [Authorize(Roles = "admin, superadmin")]

@@ -12,7 +12,7 @@
 
         public string SeriaNumber { get; set; } = null!; //capaz null
 
-        public string TagRfid { get; set; } = null!;
+        public string? TagRfid { get; set; } = null;
 
         public int IdActiveType { get; set; }
 

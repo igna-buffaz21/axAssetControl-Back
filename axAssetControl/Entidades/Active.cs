@@ -17,7 +17,7 @@ public partial class Active
 
     public string SeriaNumber { get; set; } = null!;
 
-    public string TagRfid { get; set; } = null!;
+    public string? TagRfid { get; set; } = null;
 
     public int IdActiveType { get; set; }
 

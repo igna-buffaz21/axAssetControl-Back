@@ -27,11 +27,21 @@ namespace axAssetControl.AccesoDatos
             }
         }
 
-        public async Task<User> ObtenerPorId(int id)
+        public async Task<User> ObtenerDatosUsuario(int id)
         {
             try
             {
-                return await _context.Users.FindAsync(id);
+                var datosUsuario = await _context.Users
+                    .Include(u => u.IdCompanyNavigation)
+                    .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (datosUsuario == null)
+                {
+                    throw new Exception("No se encontro al usuario con el id " + id);
+                }
+
+                return datosUsuario;
+
             }
             catch (Exception ex)
             {

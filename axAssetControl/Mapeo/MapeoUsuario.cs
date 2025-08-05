@@ -75,5 +75,22 @@ namespace axAssetControl.Mapeo
                 Email = user.Email
             };
         }
+
+        public static ObtenerDatosUsuarioDTO ObtenerDatosUsuarioA(User user)
+        {
+            return new ObtenerDatosUsuarioDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Rol = user.Rol,
+                CompanyNavigation = new Entidades.Dtos.EmpresaDTO.ObtenerEmpresaDTO
+                {
+                    Id = user.IdCompanyNavigation.Id,
+                    Name = user.IdCompanyNavigation.Name,
+                    Status = user.IdCompanyNavigation.Status
+                }
+            };
+        }
     }
 }

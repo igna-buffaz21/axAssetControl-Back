@@ -2,6 +2,7 @@
 using axAssetControl.Entidades.Dtos.ActivoDTO;
 using axAssetControl.Entidades.Dtos.SubSectorDTO;
 using axAssetControl.Mapeo;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace axAssetControl.AccesoDatos
@@ -178,6 +179,67 @@ namespace axAssetControl.AccesoDatos
             catch (Exception ex)
             {
                 throw new Exception("Error al obtener los activos " + ex.Message);
+            }
+        }
+
+        /*public async Task<List<Active>> obtenerActivosConRfid(string tagRfid)
+        {
+            try
+            {
+                return await _context.Actives.FirstOrDefaultAsync(a => a.TagRfid == tagRfid);
+            }
+            catch(Exception ex)
+            {
+
+            }
+        } */
+
+        public async Task AsignarRFIDActivo(string Rfid, int idActivo, int idEmpresa)
+        {
+            try
+            {
+
+                Console.WriteLine(idActivo);
+
+                var activo = await _context.Actives
+                    .Where(a => a.IdEmpresa == idEmpresa && a.Id == idActivo)
+                    .FirstOrDefaultAsync();
+
+                Console.WriteLine(activo);
+
+                if (activo == null)
+                {
+                    throw new Exception("activo no encontrado");
+                }
+
+                activo.TagRfid = Rfid;
+
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateException exDB)
+            {
+                Console.WriteLine("ERRO DE SQL: " + exDB.InnerException);
+
+                if (exDB.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Number == 2601 || sqlEx.Number == 2627)
+                    {
+                        // Error por clave duplicada
+                        throw new ApplicationException("El tag RFID ya está asignado a otro activo.");
+                    }
+                    else
+                    {
+                        // Otro error de SQL
+                        throw new ApplicationException($"{sqlEx.Message}");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine("ËRROR AL ASIGNAR TAG RFID: ");
+
+                throw new Exception(ex.Message);
             }
         }
     }

@@ -193,5 +193,52 @@ namespace axAssetControl.AccesoDatos
                 throw new Exception("Error al obtener los subsectores " + ex.Message);
             }
         }
+
+        public async Task<List<Active>> obtenerActivosDeSubsectorConRfid(string tagRfid)
+        {
+            try
+            {
+                var subSector = await _context.Subsectors.FirstOrDefaultAsync(ss => ss.TagRfid == tagRfid);
+
+                if (subSector == null)
+                {
+                    throw new Exception("No se encontro ningun subsector");
+                }
+
+                var activos = await _context.Actives
+                    .Where(a => a.IdSubsector == subSector.Id)
+                    .ToListAsync();
+
+                return activos;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Error al intentar obtener los activos" + ex.Message);
+            }
+        }
+
+        public async Task AsignarTagSubsector(string tagRfid, int idSubsector, int idEmpresa)
+        {
+            try
+            {
+                var subsector = await _context.Subsectors
+                    .Where(ss => ss.Id == idSubsector && ss.IdEmpresa == idEmpresa)
+                    .FirstOrDefaultAsync();
+
+                if (subsector == null)
+                {
+                    throw new Exception("Subsector no encontrado");
+                }
+
+                subsector.TagRfid = tagRfid;
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al asignar un tag RFID al subsector");
+            }
+        }
+
     }
 }

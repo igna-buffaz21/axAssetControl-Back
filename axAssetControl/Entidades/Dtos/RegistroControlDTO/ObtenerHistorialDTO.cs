@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public DateTime Date { get; set; }
+        public long Date { get; set; }
 
         public string Status { get; set; } = "inProcces";
     }

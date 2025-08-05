@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Web;
 using axAssetControl.AccesoDatos;
+using axAssetControl.Configuraciones;
 using axAssetControl.Entidades;
 using axAssetControl.Mapeo;
 using Microsoft.AspNetCore.Identity;
@@ -55,7 +56,7 @@ namespace axAssetControl.Negocio
 
             var encodedToken = HttpUtility.UrlEncode(token);
 
-            var resetLink = "http://localhost:4200/auth/reset-password?token=" + encodedToken;
+            var resetLink =  ConstantesGlobales.frontURL + "/auth/reset-password?token=" + encodedToken;
 
             var body = $@"
                 <!DOCTYPE html>

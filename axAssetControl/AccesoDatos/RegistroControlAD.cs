@@ -48,13 +48,15 @@ namespace axAssetControl.AccesoDatos
             }
         }
 
-        public async Task Agregar(ControlRecord registroControl)
+        public async Task<int> Agregar(ControlRecord registroControl)
         {
             try
             {
                 Console.WriteLine($"ID: {registroControl.Id}");
                 await _context.ControlRecords.AddAsync(registroControl);
                 await _context.SaveChangesAsync();
+
+                return registroControl.Id;
             }
             catch (Exception ex)
             {

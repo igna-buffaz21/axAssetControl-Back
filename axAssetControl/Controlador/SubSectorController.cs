@@ -150,5 +150,43 @@ namespace axAssetControl.Controlador
                 return StatusCode(500, new { mensaje = "Error interno al obtener los subsectores, intentelo mas tarde!" }); //cod 500
             }
         }
+
+        [HttpGet("ObtenerPorTag")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> getForRfid([FromQuery] string tagRfid)
+        {
+            try
+            {
+                var activos = await _subSectorNegocio.obtenerActivosDeSubsectorConRfid(tagRfid);
+                return Ok(activos);
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al obtener los activos con rfid, intentelo mas tarde!" + ex.Message }); //cod 500
+            }
+        }
+
+        [HttpPut("AsignarTagRfid")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> UpdateStatusRfid([FromQuery] string Rfid, [FromQuery] int idsubSector, [FromQuery] int idEmpresa)
+        {
+            try
+            {
+                await _subSectorNegocio.AsignarTagSubsector(Rfid, idsubSector, idEmpresa);
+                return Ok(new { mensaje = "Tag asignado con exito!" });///cod 200
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al actualizar el subSector, intentelo mas tarde!" + ex.Message }); //cod 500
+            }
+        }
     }
 }

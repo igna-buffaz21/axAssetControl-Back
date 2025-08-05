@@ -1,4 +1,5 @@
 ﻿using axAssetControl.AccesoDatos;
+using axAssetControl.Configuraciones;
 using axAssetControl.Entidades;
 using axAssetControl.Entidades.Dtos.UsuarioDTO;
 using axAssetControl.Mapeo;
@@ -27,9 +28,13 @@ namespace axAssetControl.Negocio
             return usuarioDTO;
         }
 
-        public async Task<User> ObtenerUsuarioPorId(int id)
+        public async Task<ObtenerDatosUsuarioDTO> obtenerDatosUsuario(int id)
         {
-            return await _usuarioAD.ObtenerPorId(id);
+            var usuario = await _usuarioAD.ObtenerDatosUsuario(id);
+
+            var usuarioDTO = MapeoUsuario.ObtenerDatosUsuarioA(usuario);
+
+            return usuarioDTO;
         }
         
         public async Task CrearUsuario(CrearUsuarioDTO usuarioDTO)
@@ -72,7 +77,7 @@ namespace axAssetControl.Negocio
 
             await _usuarioAD.Agregar(usuario);
 
-            var loginLink = "http://localhost:4200/auth/login";
+            var loginLink =  ConstantesGlobales.frontURL + "/auth/login";
 
             var body = $@"
                 <!DOCTYPE html>

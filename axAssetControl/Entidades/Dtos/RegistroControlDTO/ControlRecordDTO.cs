@@ -9,7 +9,7 @@ namespace axAssetControl.Entidades.Dtos.RegistroControlDTO
 
         public virtual ObtenerSubSectorPorControlDTO IdSubsectorNavigation { get; set; } = null!;
 
-        public DateTime Date { get; set; }
+        public long Date { get; set; }
 
         public ICollection<ObtenerDetalleControlDTO> DetailControls { get; set; } = new List<ObtenerDetalleControlDTO>();
     }

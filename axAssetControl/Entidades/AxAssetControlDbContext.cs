@@ -128,7 +128,7 @@ public partial class AxAssetControlDbContext : DbContext
                 .ValueGeneratedOnAdd() // ✅ Esto le dice a EF que el valor se genera automáticamente (IDENTITY).
                 .HasColumnName("id");
             entity.Property(e => e.Date)
-                .HasColumnType("datetime")
+                .HasColumnType("bigint")
                 .HasColumnName("date");
             entity.Property(e => e.IdSubsector).HasColumnName("id_subsector");
 

@@ -4,6 +4,7 @@ using axAssetControl.Negocio;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace axAssetControl.Controlador
 {
@@ -147,6 +148,29 @@ namespace axAssetControl.Controlador
             catch (Exception ex)
             {
                 return StatusCode(500, new { mensaje = "Error interno al obtener los activos, intentelo mas tarde!" }); //cod 500
+            }
+        }
+
+        [HttpPut("AsignarTagRfid")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> UpdateStatusRfid([FromQuery] string Rfid, [FromQuery] int idActivo, [FromQuery] int idEmpresa)
+        {
+            try
+            {
+                await _activoNegocio.AsignarRFIDActivo(Rfid, idActivo, idEmpresa);
+                return Ok(new { mensaje = "se le asigno un tag RFID al activo con exito" });///cod 200
+            }
+            catch(ApplicationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = ex.Message }); //cod 500
             }
         }
     }

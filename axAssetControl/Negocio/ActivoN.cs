@@ -41,10 +41,6 @@ namespace axAssetControl.Negocio
                 throw new ArgumentException("El nombre del activo es obligatorio.");
             }///Validacion nombre activo
 
-            if (string.IsNullOrWhiteSpace(activoDTO.TagRfid))
-            {
-                throw new ArgumentException("El tagRfid");
-            }///ver
 
             if (activoDTO.IdActiveType == 0)
             {
@@ -56,6 +52,7 @@ namespace axAssetControl.Negocio
             for (var i = 0; i < cantidad; i++)
             {
                 var activo = MapeoActivo.CrearActivo(activoDTO);
+                activo.Status = true;
                 listaActivos.Add(activo);
             }
 
@@ -141,6 +138,16 @@ namespace axAssetControl.Negocio
             }
 
             return await _activoAD.FiltrarActivos(idSubSector, orden);
+        }
+
+        public async Task AsignarRFIDActivo(string Rfid, int idActivo, int idEmpresa)
+        {
+            if (Rfid == "" || idActivo == 0 || idEmpresa == 0)
+            {
+                throw new ArgumentException("Rfid o ID invalido");
+            }
+
+            await _activoAD.AsignarRFIDActivo(Rfid, idActivo, idEmpresa);
         }
     }
 }

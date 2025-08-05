@@ -4,6 +4,8 @@ using axAssetControl.Entidades;
 using axAssetControl.Mapeo;
 using axAssetControl.Entidades.Dtos.SubSectorDTO;
 using axAssetControl.Entidades.Dtos.SectorDTO;
+using axAssetControl.Entidades.Dtos.ActivoDTO;
+using Microsoft.IdentityModel.Tokens;
 
 namespace axAssetControl.Negocio
 {
@@ -30,6 +32,8 @@ namespace axAssetControl.Negocio
         {
 
             var subSector = MapeoSubSector.CrearSubSector(subSectorDTO);
+
+            subSector.Status = true;
 
 
             if (string.IsNullOrWhiteSpace(subSector.Name))
@@ -108,6 +112,38 @@ namespace axAssetControl.Negocio
             }
 
             return await _subSectorAD.FiltrarSubSectores(idSector, orden);
+        }
+
+        public async Task<List<ObtenerActivoDTO>> obtenerActivosDeSubsectorConRfid(string tagRfid)
+        {
+            if (tagRfid == null)
+            {
+                throw new ArgumentException("tag nulo");
+            }
+
+            var activos = await _subSectorAD.obtenerActivosDeSubsectorConRfid(tagRfid);
+
+            var activoDTO = MapeoActivo.ObtenerActivo(activos);
+
+            return activoDTO;
+        }
+
+        public async Task AsignarTagSubsector(string tagRfid, int idSubsector, int idEmpresa)
+        {
+            if (tagRfid.IsNullOrEmpty())
+            {
+                throw new ArgumentException("El tag Rfid no puede ser nulo");
+            }
+            if (idSubsector == 0)
+            {
+                throw new ArgumentException("El id del Subsector no puede ser nulo");
+            }
+            if (idEmpresa == 0)
+            {
+                throw new ArgumentException("El id de la Empresa no puede ser nulo");
+            }
+
+            await _subSectorAD.AsignarTagSubsector(tagRfid, idSubsector, idEmpresa);
         }
 
     }

@@ -40,6 +40,7 @@ namespace axAssetControl.Mapeo
             return activos.Select(a => new ObtenerActivoDTO
             {
                 Id = a.Id,
+                IdSubsector = a.IdSubsector,
                 Name = a.Name,
                 Brand = a.Brand,
                 Model = a.Model,

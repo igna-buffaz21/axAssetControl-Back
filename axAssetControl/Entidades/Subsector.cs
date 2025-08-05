@@ -11,7 +11,7 @@ public partial class Subsector
 
     public string Name { get; set; } = null!;
 
-    public string TagRfid { get; set; } = null!;
+    public string? TagRfid { get; set; } = null;
 
     public virtual ICollection<Active> Actives { get; set; } = new List<Active>();
 

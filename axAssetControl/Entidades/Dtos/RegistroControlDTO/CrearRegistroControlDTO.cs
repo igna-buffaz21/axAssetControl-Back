@@ -4,7 +4,7 @@
     {
         public int IdSubsector { get; set; }
 
-        public DateTime Date { get; set; }
+        public long Date { get; set; }
 
         public int IdCompany { get; set; }
 

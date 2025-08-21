@@ -9,13 +9,13 @@ public partial class Active
 
     public int IdSubsector { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string? Name { get; set; } = null;
 
-    public string Brand { get; set; } = null!;
+    public string? Brand { get; set; } = null;
 
-    public string Model { get; set; } = null!;
+    public string? Model { get; set; } = null;
 
-    public string SeriaNumber { get; set; } = null!;
+    public string? SeriaNumber { get; set; } = null;
 
     public string? TagRfid { get; set; } = null;
 

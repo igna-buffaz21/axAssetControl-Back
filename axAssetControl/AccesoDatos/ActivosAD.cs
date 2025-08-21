@@ -85,9 +85,6 @@ namespace axAssetControl.AccesoDatos
                 activo.Brand = dto.Brand;
                 activo.Model = dto.Model;
                 activo.SeriaNumber = dto.SeriaNumber;
-                activo.TagRfid = dto.TagRfid;
-                activo.IdActiveType = dto.IdActiveType;
-
 
                 await _context.SaveChangesAsync();
             }
@@ -240,6 +237,75 @@ namespace axAssetControl.AccesoDatos
                 //Console.WriteLine("ËRROR AL ASIGNAR TAG RFID: ");
 
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task ReasignarActivodeLugar(int idAactivo, int idSubsector)
+        {
+            try
+            {
+                var activo = await _context.Actives
+                    .FindAsync(idAactivo);
+
+                var subSector = await _context.Subsectors
+                    .FindAsync(idSubsector);
+
+                if (activo == null)
+                {
+                    throw new Exception("No hay ningun Activo");
+                }
+
+                if (subSector == null)
+                {
+                    throw new Exception("No hay ningun Subsector");
+                }
+
+                activo.IdSubsector = subSector.Id;
+
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Active> ObtenerPorTagRfid(string rfid, int idEmpresa)
+        {
+            try
+            {
+                var activo = await _context.Actives
+                    .Where(a => a.TagRfid == rfid && a.IdEmpresa == idEmpresa)
+                    .FirstOrDefaultAsync();
+
+                if (activo == null)
+                {
+                    throw new Exception("Activo no encontrado");
+                }
+
+                return activo;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el activo " + ex.Message);
+            }
+        }
+
+        public async Task<List<Active>> ObtenerTodosLosActivosPorEmpresa(int id_Company)
+        {
+            try
+            {
+                var activos = await _context.Actives
+                    .Where(a => a.IdEmpresa == id_Company)
+                    .Include(a => a.IdSubsectorNavigation)
+                    .ToListAsync();
+
+                return activos;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener todos los activo de la empresa" + ex.Message);
             }
         }
     }

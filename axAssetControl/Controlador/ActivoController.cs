@@ -47,11 +47,11 @@ namespace axAssetControl.Controlador
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new {mensaje = ex.Message}); //cod 400
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new {mensaje = "Error interno al crear el activo, intentelo mas tarde!" }); //cod 500
+                return StatusCode(500, new { mensaje = "Error interno al crear el activo, intentelo mas tarde!" }); //cod 500
             }
         }
 
@@ -81,11 +81,11 @@ namespace axAssetControl.Controlador
             try
             {
                 await _activoNegocio.ActualizarActivo(activoDTO);
-                return Ok(new {mensaje = "Activo actualizado con exito"});///cod 200
+                return Ok(new { mensaje = "Activo actualizado con exito" });///cod 200
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new {mensaje = ex.Message}); //cod 400
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
             }
             catch (Exception ex)
             {
@@ -160,7 +160,7 @@ namespace axAssetControl.Controlador
                 await _activoNegocio.AsignarRFIDActivo(Rfid, idActivo, idEmpresa);
                 return Ok(new { mensaje = "se le asigno un tag RFID al activo con exito" });///cod 200
             }
-            catch(ApplicationException ex)
+            catch (ApplicationException ex)
             {
                 return BadRequest(new { mensaje = ex.Message });
             }
@@ -172,6 +172,69 @@ namespace axAssetControl.Controlador
             {
                 return StatusCode(500, new { mensaje = ex.Message }); //cod 500
             }
+        }
+
+        [HttpPut("ReasignarTagRfidDeLugar")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> ReasignarTagRfidDeLugar([FromQuery] int idActivo, [FromQuery] int idSubsector)
+        {
+            try
+            {
+                await _activoNegocio.ReasignarActivoDeLugar(idActivo, idSubsector);
+
+                return Ok(new { mensaje = "Activo reasignado con exito" });
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = ex.Message }); //cod 500
+            }
+        }
+
+        [HttpGet("ObtenerActivoPorRfid")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> GetForTagRfid([FromQuery] string rfid, [FromQuery] int idEmpresa)
+        {
+            try
+            {
+                var activo = await _activoNegocio.ObtenerPorTagRfid(rfid, idEmpresa);
+                return Ok(activo); //cod 200
+
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = ex.Message }); //cod 500
+            }
+
+        }
+
+        [HttpGet("ObtenerActivosPorEmpresa")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> GetAllForCompany([FromQuery] int idCompany)
+        {
+            try
+            {
+                var activos = await _activoNegocio.ObtenerTodosLosActivosEmpresa(idCompany);
+
+                return Ok(activos); //cod 200
+
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = ex.Message }); //cod 500
+            }
+
         }
     }
 }

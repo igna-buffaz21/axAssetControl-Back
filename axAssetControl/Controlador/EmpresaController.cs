@@ -119,5 +119,26 @@ namespace axAssetControl.Controlador
                 return StatusCode(500, "Error interno al editar la empresa " + ex.Message); //cod 500
             }
         }
+
+        [HttpGet("ObtenerNombredeEmpresPorId")]
+        [Authorize]
+        public async Task<IActionResult> Get([FromQuery] int id)
+        {
+            try
+            {
+               var empresa = await _empresaNegocio.ObtenerNombreEmpresaPorId(id);
+
+                return Ok(new { mensaje = empresa });
+
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al obtener el nombre de la empresa" + ex.Message); //cod 500
+            }
+        }
     }
 }

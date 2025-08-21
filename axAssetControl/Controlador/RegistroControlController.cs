@@ -170,5 +170,39 @@ namespace axAssetControl.Controlador
                 return StatusCode(500, "Error interno al editar la empresa " + ex.Message); //cod 500
             }
         } */
+
+        [HttpPost("SincronizarControlesYDetalles")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> SincronizarControlesYDetalles([FromBody] SincronizacionDTO sincronizacionDTO )
+        {
+            try
+            {
+                foreach (var control in sincronizacionDTO.Controles)
+                {
+                    Console.WriteLine("CONTROLES LLEGADOS DE ANDROID: " + control.Id);
+                }
+
+                foreach (var detalle in sincronizacionDTO.Detalles)
+                {
+                    Console.WriteLine("DETALLES LLEGADOS DE ANDROID: " + detalle.Id);
+                }
+
+                await _registroControlNegocio.SincronizarControlesYDetalles(sincronizacionDTO);
+
+                return Ok(new {mensaje = "Se sincronizo con exito!"});
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine("ERROR 400" + ex.Message);
+                return BadRequest(ex.Message); //cod 400
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR 500" + ex.InnerException);
+                return StatusCode(500, "Error interno al crear el registro Control " + ex.InnerException); //cod 500
+            }
+        }
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using axAssetControl.Entidades;
 using axAssetControl.Entidades.Dtos.ActivoDTO;
+using axAssetControl.Entidades.Dtos.SubSectorDTO;
 
 namespace axAssetControl.Mapeo
 {
@@ -20,6 +21,22 @@ namespace axAssetControl.Mapeo
             };
         }
 
+        public static ObtenerActivoDTO ObtenerActivoPorRfid(Active activo)
+        {
+            return new ObtenerActivoDTO
+            {
+
+                Id = activo.Id,
+                IdSubsector = activo.IdSubsector,
+                Name = activo.Name,
+                Brand = activo.Brand,
+                Model = activo.Model,
+                SeriaNumber = activo.SeriaNumber,
+                TagRfid = activo.TagRfid,
+                IdActiveType = activo.IdActiveType
+            };
+        }
+
         public static Active ActualizarActivo(ActualizarActivoDTO activoDTO)
         {
             return new Active
@@ -31,7 +48,6 @@ namespace axAssetControl.Mapeo
                 Model = activoDTO.Model,
                 SeriaNumber = activoDTO.SeriaNumber,
                 TagRfid = activoDTO.TagRfid,
-                IdActiveType = activoDTO.IdActiveType
             };
         }
 
@@ -49,5 +65,38 @@ namespace axAssetControl.Mapeo
                 IdActiveType = a.IdActiveType
             }).ToList();
         }
+
+        public static List<ObtenerActivosEncontradoOSSDTO> ObtenerActivoDeOtroSubSector(List<Active> activos)
+        {
+            return activos.Select(a => new ObtenerActivosEncontradoOSSDTO
+            {
+                Id = a.Id,
+                IdSubsector = a.IdSubsector,
+                Name = a.Name,
+                TagRfid = a.TagRfid,
+                IdSubsectorNavigation = new ObtenerSubSectorDTO
+                {
+                    Id = a.IdSubsectorNavigation.Id,
+                    Name = a.IdSubsectorNavigation.Name,
+                    TagRfid = a.IdSubsectorNavigation.TagRfid
+                }
+            }).ToList();
+        }
     }
 }
+
+
+/*
+  
+        private var idCompany: Int = 0
+
+        private var idUsuario: Int = 0
+
+
+        if (tokenManager.getCompanyId() != null && tokenManager.obtenerIdUsuario() != null) {
+            idCompany = tokenManager.getCompanyId()!!
+            idUsuario = tokenManager.obtenerIdUsuario()!!
+        }
+
+
+*/

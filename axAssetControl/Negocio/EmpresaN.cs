@@ -94,5 +94,15 @@ namespace axAssetControl.Negocio
                 throw new ArgumentException("Estado no valido");
             }
         }
+
+        public async Task<String> ObtenerNombreEmpresaPorId(int id)
+        {
+            if (id == 0)
+            {
+                throw new ArgumentException("id no valido");
+            }
+
+            return await _empresaAD.ObtenerNombreEmpresaPorId(id);
+        }
     }
 }

@@ -53,6 +53,37 @@ namespace axAssetControl.Negocio
             await _detalleControlAD.Agregar(detalleControl);
         }
 
+        public async Task CrearDetallesdeControlEnCantidad(List<CrearDetalleControlDTO> detallesDeControlDTO)
+        {
+
+            var detallesDeControl = MapeoDetalleControl.CrearDetallesDeControlEnCantidad(detallesDeControlDTO);
+
+            foreach (var detalleControl in detallesDeControl)
+            {
+                if (detalleControl.IdControl == 0)
+                {
+                    throw new Exception("El id control es obligatorio");
+                }
+
+                if (detalleControl.IdAuditor == 0)
+                {
+                    throw new Exception("El id_auditor es obligatorio");
+                }
+
+                if (detalleControl.IdActivo == 0)
+                {
+                    throw new Exception("El id_activo es obligatorio");
+                }
+
+                if (string.IsNullOrWhiteSpace(detalleControl.Status))
+                {
+                    throw new ArgumentException("El status es obligatorio.");
+                }
+            }
+
+            await _detalleControlAD.AgregarEnCantidad(detallesDeControl);
+        }
+
         public async Task EliminarDetalleControl(int id) ////QUEDE ACA
         {
             if (id == 0)

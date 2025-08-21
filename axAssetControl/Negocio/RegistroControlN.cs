@@ -86,6 +86,27 @@ namespace axAssetControl.Negocio
             return await _registroControlAD.ObtenerUltimoControlActivosPerdidos(idCompany);
         }
 
+        public async Task SincronizarControlesYDetalles(SincronizacionDTO sincronizacionDTO)
+        {
+
+            if (sincronizacionDTO.Controles.Count == 0)
+            {
+                throw new ArgumentException("No hay controles!");
+            }
+
+            if (sincronizacionDTO.Detalles.Count == 0)
+            {
+                throw new ArgumentException("No hay detalles");
+            }
+
+            var control = MapeoRegistroControl.CrearControlLocal(sincronizacionDTO.Controles);
+
+            var detalle = MapeoRegistroControl.CrearDetalleControlLocal(sincronizacionDTO.Detalles);
+
+            await _registroControlAD.SincronizarControlesYDetalles(control, detalle);
+
+        }
+
         ///ver si se puede actualizar un registroControl
         /*public async Task ActualizarEmpresa(ActualizarEmpresaDTO empresaDTO)
         {

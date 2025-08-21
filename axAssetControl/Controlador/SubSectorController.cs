@@ -153,12 +153,13 @@ namespace axAssetControl.Controlador
 
         [HttpGet("ObtenerPorTag")]
         [Authorize(Roles = "admin, operator")]
-        public async Task<IActionResult> getForRfid([FromQuery] string tagRfid)
+        public async Task<IActionResult> getForRfid([FromQuery] string tagRfid, [FromQuery] int idCompany)
         {
             try
             {
-                var activos = await _subSectorNegocio.obtenerActivosDeSubsectorConRfid(tagRfid);
-                return Ok(activos);
+                var response = await _subSectorNegocio.obtenerActivosDeSubsectorConRfid(tagRfid, idCompany);
+
+                return Ok(response);
             }
             catch(ArgumentException ex)
             {
@@ -186,6 +187,25 @@ namespace axAssetControl.Controlador
             catch (Exception ex)
             {
                 return StatusCode(500, new { mensaje = "Error interno al actualizar el subSector, intentelo mas tarde!" + ex.Message }); //cod 500
+            }
+        }
+
+        [HttpGet("ObtenerSubSectorPorRFID")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> GetForRFID([FromQuery] string Rfid, [FromQuery] int idEmpresa)
+        {
+            try
+            {
+                var subSectores = await _subSectorNegocio.ObtenerSubSectorPorRfid(Rfid, idEmpresa);
+                return Ok(subSectores);
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message }); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno al obtener el subSector, intentelo mas tarde!" + ex.Message }); //cod 500
             }
         }
     }

@@ -5,6 +5,7 @@ using axAssetControl.Mapeo;
 using axAssetControl.Entidades.Dtos.ActivoDTO;
 using System;
 using axAssetControl.Entidades.Dtos.SubSectorDTO;
+using Microsoft.IdentityModel.Tokens;
 
 namespace axAssetControl.Negocio
 {
@@ -89,16 +90,6 @@ namespace axAssetControl.Negocio
                 throw new ArgumentException("El nombre del activo es obligatorio.");
             }///Validacion nombre activo
 
-            if (string.IsNullOrWhiteSpace(activo.TagRfid))
-            {
-                throw new ArgumentException("El tagRfid");
-            }///ver
-
-            if (activo.IdActiveType == 0)
-            {
-                throw new ArgumentException("el tipo de activo es obligatorio");
-            }///ver
-
             await _activoAD.Actualizar(activo);
 
         }
@@ -148,6 +139,58 @@ namespace axAssetControl.Negocio
             }
 
             await _activoAD.AsignarRFIDActivo(Rfid, idActivo, idEmpresa);
+        }
+
+        public async Task ReasignarActivoDeLugar(int idActivo, int idSubsector)
+        {
+            if (idActivo == 0)
+            {
+                throw new ArgumentException("El id del activo es invalido");
+            }
+
+            if (idSubsector == 0)
+            {
+                throw new ArgumentException("El id del subsector es invalido");
+            }
+
+            await _activoAD.ReasignarActivodeLugar(idActivo, idSubsector);
+        }
+
+        public async Task<ObtenerActivoDTO> ObtenerPorTagRfid(string rfid, int idEmpresa)
+        {
+
+            if (rfid.IsNullOrEmpty())
+            {
+                throw new ArgumentException("Rfid no valido");
+            }
+
+            if (idEmpresa == 0)
+            {
+                throw new ArgumentException("Id de la empresa no valido");
+            }
+
+            var activo = await _activoAD.ObtenerPorTagRfid(rfid, idEmpresa);
+
+            var activoDTO = MapeoActivo.ObtenerActivoPorRfid(activo);
+
+            return activoDTO;
+
+        }
+
+        public async Task<List<ObtenerActivosEncontradoOSSDTO>> ObtenerTodosLosActivosEmpresa(int idCompnany)
+        {
+
+            if (idCompnany == 0)
+            {
+                throw new ArgumentException("Compania no valida");
+            }
+
+            var activo = await _activoAD.ObtenerTodosLosActivosPorEmpresa(idCompnany);
+
+            var activoDTO = MapeoActivo.ObtenerActivoDeOtroSubSector(activo);
+
+            return activoDTO;
+
         }
     }
 }

@@ -21,8 +21,7 @@ namespace axAssetControl.Mapeo
             return new Subsector
             {
                 Id = subSectorDTO.Id,
-                Name = subSectorDTO.Name,
-                TagRfid = subSectorDTO.TagRfid
+                Name = subSectorDTO.Name
             };
         }
 
@@ -34,6 +33,16 @@ namespace axAssetControl.Mapeo
                 Name = s.Name,
                 TagRfid = s.TagRfid
             }).ToList();
+        }
+
+        public static ObtenerSubSectorDTO ObtenerSubsectorRfidDTO(Subsector s)
+        {
+            return new ObtenerSubSectorDTO
+            {
+                Id = s.Id,
+                Name = s.Name,
+                TagRfid = s.TagRfid
+            };
         }
     }
 }

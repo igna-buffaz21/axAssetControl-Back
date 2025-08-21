@@ -16,6 +16,18 @@ namespace axAssetControl.Mapeo
             };
         }
 
+        public static List<DetailControl> CrearDetallesDeControlEnCantidad(List<CrearDetalleControlDTO> detallesDeControlEnCantidadDTO)
+        {
+            return detallesDeControlEnCantidadDTO.Select(dc => new DetailControl
+            {
+                IdControl = dc.IdControl,
+                IdActivo = dc.IdActivo,
+                Status = dc.Status,
+                IdAuditor = dc.IdAuditor
+            }).ToList();
+        }
+
+
         public static DetailControl ActualizarDetalleControl(ActualizarDetalleControlDTO detalleControlDTO)
         {
             return new DetailControl

@@ -136,7 +136,6 @@ namespace axAssetControl.AccesoDatos
                 }
 
                 subSector.Name = subSec.Name;
-                subSector.TagRfid = subSec.TagRfid;
 
                 await _context.SaveChangesAsync();
             }
@@ -194,11 +193,12 @@ namespace axAssetControl.AccesoDatos
             }
         }
 
-        public async Task<List<Active>> obtenerActivosDeSubsectorConRfid(string tagRfid)
+        public async Task<RetornarActivosYSSDTO> obtenerActivosDeSubsectorConRfid(string tagRfid, int idCompany)
         {
             try
             {
-                var subSector = await _context.Subsectors.FirstOrDefaultAsync(ss => ss.TagRfid == tagRfid);
+                var subSector = await _context.Subsectors
+                    .FirstOrDefaultAsync(ss => ss.TagRfid == tagRfid && ss.IdEmpresa == idCompany);
 
                 if (subSector == null)
                 {
@@ -206,10 +206,16 @@ namespace axAssetControl.AccesoDatos
                 }
 
                 var activos = await _context.Actives
-                    .Where(a => a.IdSubsector == subSector.Id)
+                    .Where(a => a.IdSubsector == subSector.Id && a.Status == true)
                     .ToListAsync();
 
-                return activos;
+                var response = new RetornarActivosYSSDTO
+                {
+                    Activos = activos,
+                    Subsector = subSector.Name
+                };
+
+                return response;
             }
             catch(Exception ex)
             {
@@ -237,6 +243,27 @@ namespace axAssetControl.AccesoDatos
             catch (Exception ex)
             {
                 throw new Exception("Error al asignar un tag RFID al subsector");
+            }
+        }
+
+        public async Task<Subsector> ObtenerPorTagRfid(string rfid, int idEmpresa)
+        {
+            try
+            {
+                var subSector = await _context.Subsectors
+                    .Where(ss => ss.TagRfid == rfid && ss.IdEmpresa == idEmpresa)
+                    .FirstOrDefaultAsync();
+
+                if (subSector == null)
+                {
+                    throw new Exception("Subsector no encontrado");
+                }
+
+                return subSector;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el subsector " + ex.Message);
             }
         }
 

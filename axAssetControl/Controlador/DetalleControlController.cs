@@ -56,6 +56,25 @@ namespace axAssetControl.Controlador
             }
         }
 
+        [HttpPost("CrearDetalleControlEnCantidad")]
+        [Authorize(Roles = "admin, operator")]
+        public async Task<IActionResult> PostInCantity([FromBody] List<CrearDetalleControlDTO> detallesControldeDTO)
+        {
+            try
+            {
+                await _detalleControlNegocio.CrearDetallesdeControlEnCantidad(detallesControldeDTO);
+                return Ok(new { mensaje = "Detalles de control creados exitosamente" });///cod 200
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message); //cod 400
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno al crear el detalle control " + ex.Message); //cod 500
+            }
+        }
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin, operator")]
         public async Task<IActionResult> Delete(int id)

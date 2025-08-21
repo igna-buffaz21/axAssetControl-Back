@@ -114,18 +114,29 @@ namespace axAssetControl.Negocio
             return await _subSectorAD.FiltrarSubSectores(idSector, orden);
         }
 
-        public async Task<List<ObtenerActivoDTO>> obtenerActivosDeSubsectorConRfid(string tagRfid)
+        public async Task<RetornarActivosDTOySubsectorDTO> obtenerActivosDeSubsectorConRfid(string tagRfid, int idCompany)
         {
             if (tagRfid == null)
             {
                 throw new ArgumentException("tag nulo");
             }
 
-            var activos = await _subSectorAD.obtenerActivosDeSubsectorConRfid(tagRfid);
+            if (idCompany == 0)
+            {
+                throw new ArgumentException("id company nulo");
+            }
 
-            var activoDTO = MapeoActivo.ObtenerActivo(activos);
+            var response = await _subSectorAD.obtenerActivosDeSubsectorConRfid(tagRfid, idCompany);
 
-            return activoDTO;
+            var activoDTO = MapeoActivo.ObtenerActivo(response.Activos);
+
+            var responseDTO = new RetornarActivosDTOySubsectorDTO
+            {
+                ActivosDTO = activoDTO,
+                Subsector = response.Subsector
+            };
+
+            return responseDTO;
         }
 
         public async Task AsignarTagSubsector(string tagRfid, int idSubsector, int idEmpresa)
@@ -144,6 +155,24 @@ namespace axAssetControl.Negocio
             }
 
             await _subSectorAD.AsignarTagSubsector(tagRfid, idSubsector, idEmpresa);
+        }
+
+        public async Task<ObtenerSubSectorDTO> ObtenerSubSectorPorRfid(string rfid, int idEmpersa)
+        {
+            if (rfid.IsNullOrEmpty())
+            {
+                throw new ArgumentException("El tag Rfid no puede ser nulo");
+            }
+            if (idEmpersa == 0)
+            {
+                throw new ArgumentException("El id de la empresa no puede ser nulo");
+            }
+
+            var subSector = await _subSectorAD.ObtenerPorTagRfid(rfid, idEmpersa);
+
+            var subSectorDTO = MapeoSubSector.ObtenerSubsectorRfidDTO(subSector);
+
+            return subSectorDTO;
         }
 
     }

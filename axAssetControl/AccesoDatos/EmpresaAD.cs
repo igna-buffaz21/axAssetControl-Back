@@ -109,6 +109,28 @@ namespace axAssetControl.AccesoDatos
                 throw new Exception("Error al actualizar la empresa en la base de datos", ex);
             }
         }
+
+        public async Task<String> ObtenerNombreEmpresaPorId(int id)
+        {
+            try
+            {
+                var nombreEmpresa = await _context.Companies
+                    .Where(c => c.Id == id)
+                    .Select(c => c.Name)
+                    .FirstOrDefaultAsync();
+
+                if (nombreEmpresa == null)
+                {
+                    throw new ArgumentException("Id de empresa no valido");
+                }
+
+                return nombreEmpresa;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener la empresa", ex);
+            }
+        }
     }
 }
 

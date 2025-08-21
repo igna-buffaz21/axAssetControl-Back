@@ -95,5 +95,28 @@ namespace axAssetControl.Mapeo
                 }).ToList()
             }).ToList();
         }
+
+        public static List<DetailControl> CrearDetalleControlLocal(List<CrearDetalleControlLocalDTO> detallesDTO)
+        {
+            return detallesDTO.Select(dc => new DetailControl
+            {
+                Id = dc.Id,
+                IdControl = dc.Id_control,
+                IdActivo = dc.Id_activo,
+                Status = dc.Status,
+                IdAuditor = dc.Id_auditor
+            }).ToList();
+        }
+
+        public static List<ControlRecord> CrearControlLocal(List<CrearRegistroControlLocalDTO> controlDTO)
+        {
+            return controlDTO.Select(c => new ControlRecord
+            {
+                Id = c.Id,
+                IdSubsector = c.Id_subsector,
+                Date = c.Date,
+                IdCompany = c.Id_Company
+            }).ToList();
+        }
     }
 }

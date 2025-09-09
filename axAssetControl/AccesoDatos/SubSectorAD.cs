@@ -198,7 +198,7 @@ namespace axAssetControl.AccesoDatos
             try
             {
                 var subSector = await _context.Subsectors
-                    .FirstOrDefaultAsync(ss => ss.TagRfid == tagRfid && ss.IdEmpresa == idCompany);
+                    .FirstOrDefaultAsync(ss => ss.TagRfid == tagRfid && ss.IdEmpresa == idCompany && ss.Status == true);
 
                 if (subSector == null)
                 {
@@ -208,6 +208,11 @@ namespace axAssetControl.AccesoDatos
                 var activos = await _context.Actives
                     .Where(a => a.IdSubsector == subSector.Id && a.Status == true)
                     .ToListAsync();
+
+                if (activos.Count == 0)
+                {
+                    throw new Exception("No se encontro ningun activo");
+                }
 
                 var response = new RetornarActivosYSSDTO
                 {
@@ -251,7 +256,7 @@ namespace axAssetControl.AccesoDatos
             try
             {
                 var subSector = await _context.Subsectors
-                    .Where(ss => ss.TagRfid == rfid && ss.IdEmpresa == idEmpresa)
+                    .Where(ss => ss.TagRfid == rfid && ss.IdEmpresa == idEmpresa && ss.Status == true)
                     .FirstOrDefaultAsync();
 
                 if (subSector == null)
